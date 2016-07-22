@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html >
+<head>
+<meta charset="UTF-8">
+<title>CodePen - Si Says</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+<link href='/css/sisays.css' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body>
+    <div id='container'>
+        <div id='overlay'></div>
+        <button id="overlayToggle" type="button"></button>
+        <button id='r' class='pieces' type='button'></button>
+        <button id='y' class='pieces' type='button'></button>
+        <div id='controls'>
+            <button class='control-btn strict-off' id='strict' type='button' disabled>STRICT</button>
+            <button class='control-btn' type='button' id='start' disabled>START</button>
+            <button class='control-btn' type='button' id='reset' disabled>RESET</button>
+            <div id='messageScreen'></div>
+            <div class="toggle toggle-switch">
+                <input type="checkbox" id="toggle-switch" class="toggle-checkbox">
+                <label class="toggle-btn" for="toggle-switch"><span class="toggle-feature" data-label-on="on" data-label-off="off"></span></label>
+            </div>
+        </div>
+        </br>
+        <button id='b' class='pieces' type='button'></button>
+        <button id='g' class='pieces' type='button'></button>
+    </div>
+
+<script src="/js/sisays.js"></script>
+</body>
+</html>

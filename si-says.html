@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+
+
+    <title>CodePen - Si Says</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel='stylesheet prefetch' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
+<link rel='stylesheet prefetch' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'>
+
+        <style>
+      .top{
+   position:absolute;
+   top:40px;
+}
+
+button{
+   height:50px;
+   width:50px;
+   /*border-bottom-left-radius: 100%;*/
+   border-color: transparent;
+   -webkit-appearance: none;
+}
+button:focus{
+   outline-color:transparent;
+}
+
+#sevenSegment{
+   background-color:#000;
+   border-top: solid 10px #000;
+   border-right: solid 4px #000;
+   border-bottom: solid 4px #000;
+   border-left: solid 10px #000;
+   width:100px;
+}
+/*
+#button1{}
+#button2{background-color:#000059;}
+#button3{background-color:#005100;}
+#button4{background-color:#8D8D00;}
+*/
+.red{background-color:red !important;}
+.blue{background-color:blue !important;;}
+.green{background-color:green !important;;}
+.yellow{background-color:yellow !important;;}
+
+.dark-red{background-color:#800000;}
+.dark-blue{background-color:#000059;}
+.dark-green{background-color:#005100;}
+.dark-yellow{background-color:#8D8D00;}
+    </style>
+
+
+
+
+  </head>
+
+  <body translate="no" >
+
+     <main>
+   <div class="container">
+      <div class="row">
+         <div class="col-sm-offset-3 col-sm-6">
+            <div class="top">
+
+               <div class="lcd" id="sevenSegment"></div>
+
+               <button id="red" class="dark-red game-button" value="red"></button>
+               <button id="blue" class="dark-blue game-button" value="blue"></button>
+               <button id="green" class="dark-green game-button" value="green"></button>
+               <button id="yellow" class="dark-yellow game-button" value="yellow"></button>
+
+               <div><button id="start" value="start">Start</button></div>
+               <div><button id="reset" value="reset">Reset</button></div>
+
+            </div>
+
+         </div>
+      </div>
+</main>
+
+<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+<script src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+<script src='//ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js'></script>
+<script src='//s3-eu-west-1.amazonaws.com/jw1976sampleapps/sevenSeg.js'></script>
+
+        <script>
+      /* dev in localhost to use debug tools properly */
+var display = 0;
+var buttonArray = [];
+var userClickValuesArray = [];
+
+var onOff = true;
+var userClickValue;
+var numberOfTurns = 0;
+
+$('#reset').click(function() {
+   display = 0;
+   buttonArray = [];
+   userClickValuesArray = [];
+   numberOfTurns = 0;
+   userClickValue = null;
+   console.log("reset buttonArray " + buttonArray[0]);
+   console.log("reset userClickValuesArray " + userClickValuesArray[0]);
+   $('#start').prop( "disabled", false );
+   $("#sevenSegment").sevenSegArray({ digits: 2, value: display });
+});
+
+$(document).ready(function() {
+            $("#sevenSegment").sevenSegArray({ digits: 2, value: display });
+})
+
+$('#red').click(function() {
+            $("#red").toggleClass( "red", 500 );
+            $("#red").toggleClass( "red" );
+});
+$('#blue').click(function() {
+            $("#blue").toggleClass( "blue", 500 );
+            $("#blue").toggleClass( "blue" );
+});
+$('#green').click(function() {
+            $("#green").toggleClass( "green", 500 );
+            $("#green").toggleClass( "green" );
+});
+$('#yellow').click(function() {
+            $("#button4").toggleClass( "yellow", 500 );
+            $("#button4").toggleClass( "yellow" );
+});
+
+$('#start').click(function() {
+   display++;
+
+   $("#sevenSegment").sevenSegArray({ digits: 2, value: display });
+
+   //build the array - push another colour in, then run it.
+   buttonArray.push( randomColor() );
+
+   //console.log(buttonArray.length);
+   var buttonArrayLength = buttonArray.length;
+   $( 'button' ).prop( "disabled", true );
+   $( '#start' ).prop( "disabled", true );
+
+   $.each(buttonArray, function(i, value) {
+      setTimeout(function() {
+
+         if (buttonArray[i] == "red"){
+            $("#red").toggleClass( "red",500 );
+            $("#red").toggleClass( "red" );
+         }
+         if (buttonArray[i] == "blue"){
+            $("#blue").toggleClass( "blue",500 );
+            $("#blue").toggleClass( "blue" );
+         }
+         if (buttonArray[i] == "green"){
+            $("#green").toggleClass( "green",500 );
+            $("#green").toggleClass( "green" );
+         }
+         if (buttonArray[i] == "yellow"){
+            $("#yellow").toggleClass( "yellow",500 );
+            $("#yellow").toggleClass( "yellow" );
+         }
+      }, 1000 * i);
+
+      //Keep the buttons disabled until after the sequence ends - plus 500ms
+      setTimeout(function() {
+         $( 'button' ).prop( "disabled", false );
+         $( '#start' ).prop( "disabled", true );
+      }, 1000 * buttonArrayLength + 500);
+   });
+
+   //Time for the user's input...
+   $(".game-button").click(function() {
+      //$('#start').prop( "disabled", true );
+      userClickValue = $(this).attr("value");
+
+         if(numberOfTurns < buttonArray.length ) {
+            console.log('numberOfTurns ' + numberOfTurns);
+
+            if(userClickValue == 'red' ||
+               userClickValue == 'blue' ||
+               userClickValue == 'green' ||
+               userClickValue == 'red') {
+               userClickValuesArray.push(userClickValue);
+               numberOfTurns++;
+            }
+
+            //userClickValuesArray.push(userClickValue);
+            console.log("userClick " + userClickValuesArray);
+            console.log("buttonArray " + buttonArray);
+         }
+
+      //check the inputs/answers
+      userResponseTest();
+
+   })
+
+}); /* end of start function */
+
+var colorChoice;
+var colorBlock;
+function randomColor()
+{
+    var random = function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+    colorChoice = random(1, 3);
+
+    switch(colorChoice){
+        case 1:
+            colorBlock = "red";
+            break;
+        case 2:
+            colorBlock = "blue";
+            break;
+        case 3:
+            colorBlock = "green";
+            break;
+        default:
+            colorBlock = "yellow";
+    }
+    return colorBlock;
+}
+
+function userResponseTest() {
+
+   $.each(buttonArray, function(i, value) {
+
+      if( buttonArray[i] == userClickValuesArray[i] ){
+         console.log("Loop i " + i);
+         console.log('match');
+         i++;
+         $('#start').click();
+      } else {
+         console.log('mistake');
+         $('#reset').click();
+         i = 0;
+      }
+   });
+
+}
+/*
+
+choice of four colours - select at random and push into array
+
+start
+count
+on/off
+timer/interval
+
+random series of button presses.
+
+User Story: Each time I input a series of button presses correctly, I see the same series of button presses but with an additional step.
+
+sound that corresponds to each button both when the series of button presses plays, and when I personally press a button.
+
+User Story: If I press the wrong button, I am notified that I have done so, and that series of button presses starts again to remind me of the pattern so I can try again.
+
+User Story: I can see how many steps are in the current series of button presses.
+
+User Story: If I want to restart, I can hit a button to do so, and the game will return to a single step.
+
+User Story: I can play in strict mode where if I get a button press wrong, it notifies me that I have done so, and the game restarts at a new random series of button presses.
+
+User Story: I can win the game by getting a series of 20 steps correct. I am notified of my victory, then the game starts over.
+
+
+
+*/
+      //# sourceURL=pen.js
+    </script>
+
+
+
+
+  </body>
+</html>
