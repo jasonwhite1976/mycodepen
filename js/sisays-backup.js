@@ -1,7 +1,5 @@
 /* tdl
 
-if off - reset all and disable buttons
-
 board buttons disabled while simon goes
 
 only detecting first player error...
@@ -18,6 +16,7 @@ User Story: If I want to restart, I can hit a button to do so, and the game will
 User Story: I can play in strict mode where if I get a button press wrong, it notifies me that I have done so, and the game restarts at a new random series of button presses.
 
 */
+
 
 (document).addEventListener('DOMContentLoaded', function() {
 
@@ -47,6 +46,7 @@ User Story: I can play in strict mode where if I get a button press wrong, it no
 	var overlayToggleButton = document.getElementById('overlayToggle');
 
 	// trigger lightUpPlay event on click;
+	// put this into a function to enable/disable...
 	r.addEventListener('click', lightUpPlay);
 	g.addEventListener('click', lightUpPlay);
 	y.addEventListener('click', lightUpPlay);
@@ -140,7 +140,7 @@ var SIMON = (function(){
 		 simonMoves: function(){
 			return moves;
 		 },
-		 isSimonTurn: function(){ //240
+		 isSimonTurn: function(){
 			return isSIMONturn;
 		 },
 		 simonTurnFalse: function(){
@@ -159,13 +159,19 @@ var SIMON = (function(){
 		},*/
 		 resetMovesArray: function(){
 			moves = [];
+			//console.log('simon moves = ' + moves.length);
+		 },
+		 movesArrayPop: function(){
+			//console.log(moves);
+			moves.pop();
+			//console.log(moves);
 		 },
 
 		 simulate: function(){
 
 			var goNumber = moves.length + 1;
 			console.log('Round ' + goNumber);
-			var isPlayerTryingAgain = PLAYER.tryingAgain(); // 299
+			var isPlayerTryingAgain = PLAYER.tryingAgain();
 			console.log('isPlayerTryingAgain = ' + isPlayerTryingAgain);
 
 			if (isPlayerTryingAgain === false){
@@ -173,14 +179,16 @@ var SIMON = (function(){
 				console.log('simon addMove');
 				SIMON.simonsTurn();
 			} else {
-				goNumber = goNumber - 1;
+				DISPLAY.showMessage('TRY AGAIN', 0);
+				//moves.pop();
+				//goNumber = moves.length + 1;
 			}
-
 			if (!INIT.powerState()){
 			   return null;
 			}
 
 			DISPLAY.showMessage('ROUND ' + goNumber, 0);
+
 
 		},
 
@@ -212,7 +220,6 @@ var SIMON = (function(){
 
 	}
 var playerGoes = 0;
-//console.log('playerGoes = ' + playerGoes);
 /* if I make a mistake on the first click = error. No error on next clixk though
 
 /********************************/
@@ -224,6 +231,7 @@ var playerGoes = 0;
 		var playerGoResult;
 		var simonMoves = SIMON.simonMoves();
 		var isItSimonsTurn = false;
+
 
 		// helper function to lighten the clicked item's color
 		let computeLightUpColor = () => {
@@ -238,19 +246,17 @@ var playerGoes = 0;
 			return newRGB;
 		}
 
-		isItSimonsTurn = SIMON.isSimonTurn(); //142
+		isItSimonsTurn = SIMON.isSimonTurn();
 
 		if (!isItSimonsTurn){
 
 			PLAYER.addPlayerMove(clickedItem.id);
 			playerGoResult = PLAYER.playerInput(playerGoes) // will equal true or false or undefined!!
 			console.log('playerAnswer = ' + playerGoResult);
-			console.log('playerGoes = ' + playerGoes);
 			playerGoes++;
 			if (playerGoResult !== true){ //wrong
 				console.log('loooose');
 				PLAYER.loses(); // 368
-				playerGoes = 0;
 			}
 		}
 
@@ -299,23 +305,14 @@ var playerGoes = 0;
 				return score;
 			},
 
-			tryingAgain: function(){ //166
-				return tryingAgain;
-			},
-
-			tryingAgainSetTrue: function(){ //166
-				tryingAgain = true;
-				return tryingAgain;
-			},
-
-			tryingAgainSetFalse: function(){ //166
-				tryingAgain = false;
+			tryingAgain: function(){
 				return tryingAgain;
 			},
 
 			addPlayerMove: function(move){
 				moves.push(move);
 			},
+
 
 			playerInput: function(goCount){
 				//var checkArray = [];
@@ -360,7 +357,7 @@ var playerGoes = 0;
 			},
 
 			loses: function(){
-				DISPLAY.showMessage('WRONG', 0);
+				DISPLAY.showMessage('WRONG', 5);
 				//console.log('loses - wrong');
 				//debugger;
 
@@ -373,8 +370,7 @@ var playerGoes = 0;
 				var finalScore = PLAYER.score();
 				//console.log('Final score = ' + finalScore);
 				//DISPLAY.flashMessage(['RESET', `SCORE: ${finalScore}`]);
-				PLAYER.resetMovesArray();
-
+				//PLAYER.resetMovesArray();
 				//SIMON.resetMovesArray();
 
 				if(INIT.strict()){
@@ -382,13 +378,14 @@ var playerGoes = 0;
 					//big lose function
 				} else {
 					//tryingAgain = true;
-					PLAYER.tryingAgainSetTrue();
 					console.log('tryingAgain ' + tryingAgain);
-					DISPLAY.showMessage('TRY AGAIN', 1500);
-					setTimeout( function() {
-						SIMON.simonsTurn();
-						PLAYER.tryingAgainSetFalse();
-					}, 3500 );
+					//PLAYER.playerMovesSetToSimon();
+					//setTimeout(function() {
+						//
+						//console.log('timeout tryingAgain ' + tryingAgain);
+						//SIMON.simonsTurn();
+						//tryingAgain = false;
+					//}, simonMoves.length * 1000);
 				}
 
 
